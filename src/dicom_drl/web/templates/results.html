@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Výsledky analýzy DRL</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --success: #1e7e34;
+            --bg: #f1f3f4;
+            --text: #202124;
+            --gray: #5f6368;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text);
+            margin: 0; padding: 40px 20px;
+        }
+
+        .card { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            max-width: 1100px; 
+            margin: auto; 
+            box-shadow: 0 1px 3px rgba(60,64,67,0.3); 
+        }
+
+        h1 { color: var(--primary); font-size: 24px; border-bottom: 1px solid #e8eaed; padding-bottom: 15px; margin-bottom: 30px; }
+
+        .main-stats { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 40px; 
+        }
+
+        .stat-box { 
+            background: #f8f9fa; 
+            border: 1px solid #dadce0; 
+            padding: 20px; 
+            border-radius: 8px; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-box label { font-size: 11px; color: var(--gray); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; }
+
+        .value-container { display: flex; align-items: baseline; gap: 6px; }
+        .stat-box .value { font-size: 32px; font-weight: 500; line-height: 1; }
+        .stat-box .unit { font-size: 14px; color: var(--gray); }
+
+        .ref-box { background: #e6f4ea; border-left: 5px solid #34a853; padding: 15px 20px; border-radius: 4px; margin: 30px 0; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; font-size: 12px; color: var(--gray); text-transform: uppercase; padding: 12px; border-bottom: 2px solid #f1f3f4; }
+        td { padding: 12px; border-bottom: 1px solid #f1f3f4; font-size: 14px; }
+        tr:hover { background-color: #f8f9fa; }
+
+        .actions { 
+            margin-top: 40px; 
+            display: flex; 
+            gap: 15px; 
+            border-top: 1px solid #eee; 
+            padding-top: 30px; 
+        }
+
+        .btn { 
+            display: inline-block; 
+            padding: 12px 25px; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .btn-back { background: #f1f3f4; color: var(--text); }
+        .btn-back:hover { background: #e8eaed; }
+
+        .btn-export { background: var(--success); color: white; }
+        .btn-export:hover { background: #1a6d2d; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Výsledná statistika výběru</h1>
+    
+    <div class="main-stats">
+        <div class="stat-box">
+            <label>Počet snímků</label>
+            <div class="value-container">
+                <span class="value">{{ summary.count }}</span>
+            </div>
+        </div>
+
+        <div class="stat-box">
+            <label>Průměrná hmotnost</label>
+            <div class="value-container">
+                <span class="value">{{ summary.weight_mean }}</span>
+                <span class="unit">kg</span>
+            </div>
+        </div>
+
+        <div class="stat-box" style="border-top: 3px solid var(--primary);">
+            <label>Průměrný KAP</label>
+            <div class="value-container">
+                <span class="value" style="color: var(--primary);">{{ summary.mean }}</span>
+                <span class="unit">mGy·cm²</span>
+            </div>
+        </div>
+
+        <div class="stat-box">
+            <label>Medián KAP</label>
+            <div class="value-container">
+                <span class="value">{{ summary.median }}</span>
+                <span class="unit">mGy·cm²</span>
+            </div>
+        </div>
+    </div>
+
+    {% if ref_summary %}
+    <div class="ref-box">
+        <strong>Referenční skupina (60–80 kg):</strong>
+        Průměrný KAP je <b>{{ ref_summary.mean }} mGy·cm²</b>.
+    </div>
+    {% endif %}
+
+    <h3>Detailní tabulka dat</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Pacient ID</th>
+                <th>Datum</th>
+                <th>Váha</th>
+                <th>KAP [mGy·cm²]</th>
+                <th>Lokalita</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in individual_data %}
+            <tr>
+                <td>{{ item.ID }}</td>
+                <td style="color: var(--gray);">{{ item.Date }}</td>
+                <td>{{ item.Weight if item.Weight else '---' }} kg</td>
+                <td style="font-weight: 600; color: var(--success);">{{ item.KAP }}</td>
+                <td style="font-size: 12px;">{{ item.Description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a href="/" class="btn btn-back">← Zpět na výběr</a>
+
+        <form action="/export" method="POST" style="margin: 0;">
+            {% for item in individual_data %}
+            <input type="hidden" name="selected_files" value="{{ item.Path }}">
+            {% endfor %}
+            <button type="submit" class="btn btn-export">Stáhnout jako Excel (CSV)</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

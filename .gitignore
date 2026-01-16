@@ -1,0 +1,26 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Data a DICOM soubory (důležité!)
+# DICOM data jsou velká a do Gitu nepatří.
+data/
+*.dcm
+*.ima
+
+# IDEs
+.vscode/
+.idea/
+
+# Lokalní konfigurace
+.env
+
+# Web thumbnails
+src/dicom_drl/web/static/thumbnails/*.png
