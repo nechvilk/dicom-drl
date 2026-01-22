@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  dicom-drl:
+    build: .
+    container_name: dicom_drl_app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      # Propojení Samba složky na RPi s aplikací v Dockeru
+      - /home/piadmin/dicom_data:/app/data
+      # Volume pro ukládání náhledů (aby se nemusely generovat znovu při restartu)
+      - thumb_cache:/app/src/dicom_drl/web/static/thumbnails
+    environment:
+      - FLASK_DEBUG=False
+      - DICOM_DATA_DIR=/app/data
+
+volumes:
+  thumb_cache:

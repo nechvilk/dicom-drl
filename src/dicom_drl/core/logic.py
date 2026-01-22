@@ -43,9 +43,12 @@ def get_drl_metadata(path):
         # Tag (0018, 115E) correspond to ImageAreaDoseProduct
         kap_raw = ds.get((0x0018, 0x115e), None)
         
-        if kap_raw is not None:
-            # Původní logika: násobení 100.0 pro převod jednotek
-            kap = round(float(kap_raw.value) * 100.0, 2)
+        if kap_raw is not None and kap_raw.value != '':
+            try:
+                # Původní logika: násobení 100.0 pro převod jednotek
+                kap = round(float(kap_raw.value) * 100.0, 2)
+            except (ValueError, TypeError):
+                kap = "N/A"
         else:
             kap = "N/A"
 
