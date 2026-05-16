@@ -1,6 +1,6 @@
-# DICOM DRL Analyzer (MDRÚ)
+# DICOM DRL Analyzer (DRÚ)
 
-Nástroj pro automatizovanou analýzu a sledování **Místních diagnostických referenčních úrovní (MDRÚ)** z DICOM souborů. Projekt je optimalizován pro běh na **Raspberry Pi** s **Ubuntu Serverem** (headless režim), což umožňuje stabilní a nízkonákladové síťové nasazení.
+Nástroj pro automatizovanou analýzu a sledování **Diagnostických referenčních úrovní (DRÚ)** z DICOM souborů. Projekt je optimalizován pro běh na **Raspberry Pi** s **Ubuntu Serverem** (headless režim), což umožňuje stabilní a nízkonákladové síťové nasazení.
 
 ## 🌟 Hlavní funkce
 - **Extrakce parametrů:** Automatické čtení klíčových parametrů (ID pacienta, datum vyšetření, hmotnost pacienta, DAP - dose area pruduct) z DICOM hlaviček.
